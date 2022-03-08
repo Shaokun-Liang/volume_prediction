@@ -8,10 +8,18 @@ def mapeTest(df1, df2, index):
 
 
     def coefficient_estim(data1, data2):
+        '''
 
-        d1_1 = data2.loc[:, 'eta_t1']
+        GMM coefficient estimation of the SEM equation
 
-        d1_1 = np.log(d1_1)  # 传入η_t-1
+        :param data1: dataframe(shape的描述),daily statistics
+        :param data2: dataframe,daily statistics
+        :return: [b1, b2,b3,b4,b5] which is the coefficient we estimate
+        '''
+
+        eta = data2.loc[:, 'eta_t1']
+
+        eta = np.log(eta)  # 传入η_t-1
 
         d5_1 = data2.loc[:, 'xt_eta_1']
 
@@ -38,7 +46,7 @@ def mapeTest(df1, df2, index):
         b0 = logd2 - d6
         b11 = d6 - logd2
         b1 = b11.sum(axis=0)
-        b21 = -d1_1 * b0
+        b21 = -eta * b0
         b2 = b21.sum(axis=0)
         b31 = -d5_1 * b0
         b3 = b31.sum(axis=0)
@@ -49,23 +57,23 @@ def mapeTest(df1, df2, index):
 
         # w系数矩阵第一行
         w11 = len(df1)
-        w12 = d1_1.sum(axis=0)
+        w12 = eta.sum(axis=0)
         w13 = d5_1.sum(axis=0)
         w14 = d3_1.sum(axis=0)
         w15 = d4_1.sum(axis=0)
         # w系数矩阵第二行
-        w21 = d1_1.sum(axis=0)
-        x22 = d1_1 * d1_1
+        w21 = eta.sum(axis=0)
+        x22 = eta * eta
         w22 = x22.sum(axis=0)
-        x23 = d1_1 * d5_1
+        x23 = eta * d5_1
         w23 = x23.sum(axis=0)
-        x24 = d1_1 * d3_1
+        x24 = eta * d3_1
         w24 = x24.sum(axis=0)
-        x25 = d1_1 * d4_1
+        x25 = eta * d4_1
         w25 = x25.sum(axis=0)
         # w系数矩阵第三行
         w31 = d5_1.sum(axis=0)
-        x32 = d5_1 * d1_1
+        x32 = d5_1 * eta
         w32 = x32.sum(axis=0)
         x33 = d5_1 * d5_1
         w33 = x33.sum(axis=0)
@@ -75,7 +83,7 @@ def mapeTest(df1, df2, index):
         w35 = x35.sum(axis=0)
         # w系数矩阵第四行
         w41 = d3_1.sum(axis=0)
-        x42 = d3_1 * d1_1
+        x42 = d3_1 * eta
         w42 = x42.sum(axis=0)
         x43 = d3_1 * d5_1
         w43 = x43.sum(axis=0)
@@ -85,7 +93,7 @@ def mapeTest(df1, df2, index):
         w45 = x45.sum(axis=0)
         # w系数矩阵第五行
         w51 = d4_1.sum(axis=0)
-        x52 = d4_1 * d1_1
+        x52 = d4_1 * eta
         w52 = x52.sum(axis=0)
         x53 = d4_1 * d5_1
         w53 = x53.sum(axis=0)
@@ -126,7 +134,7 @@ def mapeTest(df1, df2, index):
         coef[2]:alpha_1_(eta)
         coef[3]:beta_1_(mu)
         coef[4]:alpha_1(mu)
-        v[0]:d1_1(#传入η_t-1)
+        v[0]:eta(#传入η_t-1)
         v[1]:d5_1(#传入x_t-1^((η)))
         v[2]:d3_1(传入μ_ti-1)
         v[3]:d4_1(#传入x_ti-1^((μ)))
