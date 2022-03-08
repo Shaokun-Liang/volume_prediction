@@ -5,7 +5,7 @@ from util.util import run
 
 
 
-print(123)
+print(())
 run()
 
 

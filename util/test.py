@@ -1,1 +1,2 @@
-from util import cal
+from util import run
+run()
